@@ -9,11 +9,18 @@ pub struct Sample {
 
 impl Sample {
     pub fn from_file(file_path: &str) -> Result<Self> {
+        // Note: It is ok just to use ? if the additional information is not necessary to include even though the error happened
         // let f = File::open(file_path)?;
+
+        // Note: If it is necessary to return the error with the custom message, it also works.
+        // let f = File::open(file_path).expect("write custom message");
+
+        // Note: This is useful when you want to return the error with the custom message including the error happened
         let f = match File::open(file_path) {
             Ok(v) => v,
-            Err(e) => return Err(anyhow!("Failed to open file, error: {}", e)),
+            Err(e) => Err(anyhow!("Failed to open file, error: {}", e)),
         };
+
         // serde_json::from_reader(f)?
         match serde_json::from_reader(f) {
             Ok(v) => Ok(v),
